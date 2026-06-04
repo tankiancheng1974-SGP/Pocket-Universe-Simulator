@@ -36,7 +36,7 @@ tension_gap = ((h0_value - 67.36) / 67.36) * 100
 # 2. TELEMETRY TABLE DISPLAY
 # -------------------------------------------------------------
 st.subheader("📊 Active Telemetry Metrics Table")
-col1, col2 = st.columns()
+col1, col2 = st.columns(2)
 
 with col1:
     st.metric(label="Hubble Tension Mismatch", value=f"{tension_gap:.2f}%")
