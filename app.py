@@ -99,16 +99,19 @@ img_col1, img_col2 = st.columns(2)
 
 with img_col1:
     st.subheader("📸 Live Cosmic Imagery Feed")
-    try:
-        # Grab the Astronomy Picture of the Day from NASA's public API
+     try:
+        # Grab high-resolution space telescope imagery
         nasa_url = "https://nasa.gov"
         response = requests.get(nasa_url, timeout=5).json()
-        if "url" in response:
-            st.image(response["url"], caption=response.get("title", "Space View"), use_container_width=True)
-        else:
-            st.info("Cosmic feed stream currently offline.")
+        # Pull a random top-tier cosmic image from the telescope archive
+        items = response["collection"]["items"]
+        img_url = items[0]["links"][0]["href"]
+        title = items[0]["data"][0]["title"]
+
+        st.image(img_url, caption=f"Telescope Archive: {title}", use_container_width=True)
     except Exception:
-        st.info("Unable to connect to the external satellite feed right now.")
+        # Ultimate backup image if the entire internet grid fails
+        st.image("https://unsplash.com", caption="Static Backup Matrix: Deep Space Nebula", use_container_width=True)
 
 with img_col2:
     st.subheader("📥 Upload Cosmic Data Matrix")
