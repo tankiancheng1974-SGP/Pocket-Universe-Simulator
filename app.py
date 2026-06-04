@@ -109,7 +109,7 @@ else:
     if user_question:
         with st.spinner("Analyzing cosmic data..."):
             try:
-                model = genai.GenerativeModel(model_name="gemini-1.5-flash", system_instruction=system_prompt)
+                model = genai.GenerativeModel(model_name="gemini-2.5-flash", system_instruction=system_prompt)
                 response = model.generate_content(user_question)
                 st.markdown(f"**KCTAN-GEMINI:** {response.text}")
             except Exception as e:
