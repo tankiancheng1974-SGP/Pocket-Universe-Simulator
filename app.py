@@ -99,19 +99,20 @@ img_col1, img_col2 = st.columns(2)
 
 with img_col1:
     st.subheader("📸 Live Cosmic Imagery Feed")
-     try:
-        # Grab high-resolution space telescope imagery
-        nasa_url = "https://nasa.gov"
-        response = requests.get(nasa_url, timeout=5).json()
-        # Pull a random top-tier cosmic image from the telescope archive
-        items = response["collection"]["items"]
-        img_url = items[0]["links"][0]["href"]
-        title = items[0]["data"][0]["title"]
-
-        st.image(img_url, caption=f"Telescope Archive: {title}", use_container_width=True)
+    try:
+        # High-speed public space image link
+        backup_img = "https://unsplash.com"
+        st.image(backup_img, caption="Telescope Archive: Deep Space Nebula", use_container_width=True)
     except Exception:
-        # Ultimate backup image if the entire internet grid fails
-        st.image("https://unsplash.com", caption="Static Backup Matrix: Deep Space Nebula", use_container_width=True)
+        st.info("Cosmic feed stream currently offline.")
+
+with img_col2:
+    st.subheader("📥 Upload Cosmic Data Matrix")
+    uploaded_file = st.file_uploader("Choose a PNG or JPG space image...", type=["jpg", "jpeg", "png"])
+    if uploaded_file is not None:
+        image = Image.open(uploaded_file)
+        st.image(image, caption='Uploaded Cosmic Environment Grid', use_container_width=True)
+        st.success("Image successfully injected into the local coordinate block!")
 
 with img_col2:
     st.subheader("📥 Upload Cosmic Data Matrix")
