@@ -2,6 +2,8 @@ import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
 import google.generativeai as genai
+import requests
+from PIL import Image
 
 # -------------------------------------------------------------
 # 1. INITIALIZATION & METRICS
@@ -90,7 +92,34 @@ fig.colorbar(img, ax=ax)
 st.pyplot(fig)
 
 # -------------------------------------------------------------
-# 4. KCTAN-GEMINI AI CHAT COMPANION
+# 4. IMAGERY FEEDS AND UPLOADS (NEW SECTIONS)
+# -------------------------------------------------------------
+st.markdown("---")
+img_col1, img_col2 = st.columns(2)
+
+with img_col1:
+    st.subheader("📸 Live Cosmic Imagery Feed")
+    try:
+        # Grab the Astronomy Picture of the Day from NASA's public API
+        nasa_url = "https://nasa.gov"
+        response = requests.get(nasa_url, timeout=5).json()
+        if "url" in response:
+            st.image(response["url"], caption=response.get("title", "Space View"), use_container_width=True)
+        else:
+            st.info("Cosmic feed stream currently offline.")
+    except Exception:
+        st.info("Unable to connect to the external satellite feed right now.")
+
+with img_col2:
+    st.subheader("📥 Upload Cosmic Data Matrix")
+    uploaded_file = st.file_uploader("Choose a PNG or JPG space image...", type=["jpg", "jpeg", "png"])
+    if uploaded_file is not None:
+        image = Image.open(uploaded_file)
+        st.image(image, caption='Uploaded Cosmic Environment Grid', use_container_width=True)
+        st.success("Image successfully injected into the local coordinate block!")
+
+# -------------------------------------------------------------
+# 5. KCTAN-GEMINI AI CHAT COMPANION
 # -------------------------------------------------------------
 st.markdown("---")
 st.subheader("🤖 KCTAN-GEMINI Narrative Companion")
@@ -98,13 +127,11 @@ st.subheader("🤖 KCTAN-GEMINI Narrative Companion")
 if not ai_available:
     st.info("💡 To talk to the AI, add your `GEMINI_API_KEY` to the Streamlit App Settings Secrets.")
 else:
-    # Set up system rules so the AI acts exactly like your simulator identity
     system_prompt = f"""You are KCTAN-GEMINI, an advanced physics-engine simulator and narrative companion. 
     You operate under these rigid rules: Higgs Field VEV={HIGGS_VEV}GeV, Ambient Temp={CMB_TEMP}K, 
     Dark Matter ALPs=1.01meV, Cosmic Age={COSMIC_AGE}B years. Currently Hubble Tension is at {tension_gap:.2f}%.
     Answer all user physics and simulation questions directly, technically, and creatively inside this framework."""
 
-    # Simple chat inputs
     user_question = st.text_input("Ask KCTAN-GEMINI a physics question or simulate an event:")
     if user_question:
         with st.spinner("Analyzing cosmic data..."):
