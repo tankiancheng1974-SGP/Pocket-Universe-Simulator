@@ -2,8 +2,6 @@ import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
 import google.generativeai as genai
-import requests
-from PIL import Image
 
 # -------------------------------------------------------------
 # 1. INITIALIZATION & METRICS
@@ -46,6 +44,7 @@ with col1:
 
 with col2:
     st.markdown(f"""
+
 
     | Parameter | Operational Specification | Classification |
     | :--- | :--- | :--- |
@@ -92,35 +91,25 @@ fig.colorbar(img, ax=ax)
 st.pyplot(fig)
 
 # -------------------------------------------------------------
-# 4. IMAGERY FEEDS AND UPLOADS (NEW SECTIONS)
+# 4. IMAGERY FEEDS AND URL INJECTION
 # -------------------------------------------------------------
 st.markdown("---")
 img_col1, img_col2 = st.columns(2)
 
 with img_col1:
-    st.subheader("📸 Live Cosmic Imagery Feed")
-    try:
-        # High-speed public space image link
-        backup_img = "https://unsplash.com"
-        st.image(backup_img, caption="Telescope Archive: Deep Space Nebula", use_container_width=True)
-    except Exception:
-        st.info("Cosmic feed stream currently offline.")
+    st.subheader("📸 Telescope Imagery Archive")
+    # Clean, ultra-reliable fallback image to avoid any cross-site connection blocks
+    st.image("https://unsplash.com", caption="Telescope Target Matrix: Deep Space Nebula", use_container_width=True)
 
 with img_col2:
-    st.subheader("📥 Upload Cosmic Data Matrix")
-    uploaded_file = st.file_uploader("Choose a PNG or JPG space image...", type=["jpg", "jpeg", "png"])
-    if uploaded_file is not None:
-        image = Image.open(uploaded_file)
-        st.image(image, caption='Uploaded Cosmic Environment Grid', use_container_width=True)
-        st.success("Image successfully injected into the local coordinate block!")
-
-with img_col2:
-    st.subheader("📥 Upload Cosmic Data Matrix")
-    uploaded_file = st.file_uploader("Choose a PNG or JPG space image...", type=["jpg", "jpeg", "png"])
-    if uploaded_file is not None:
-        image = Image.open(uploaded_file)
-        st.image(image, caption='Uploaded Cosmic Environment Grid', use_container_width=True)
-        st.success("Image successfully injected into the local coordinate block!")
+    st.subheader("📥 Link Cosmic Matrix URL")
+    image_url_input = st.text_input("Paste a direct space image web link (JPG/PNG) here to inject it:", value="")
+    if image_url_input:
+        try:
+            st.image(image_url_input, caption="Injected External Coordinate Image", use_container_width=True)
+            st.success("Image URL successfully mounted to local coordinate block!")
+        except Exception:
+            st.error("Unable to resolve image link. Please verify the URL destination.")
 
 # -------------------------------------------------------------
 # 5. KCTAN-GEMINI AI CHAT COMPANION
@@ -136,8 +125,12 @@ else:
     Dark Matter ALPs=1.01meV, Cosmic Age={COSMIC_AGE}B years. Currently Hubble Tension is at {tension_gap:.2f}%.
     Answer all user physics and simulation questions directly, technically, and creatively inside this framework."""
 
-    user_question = st.text_input("Ask KCTAN-GEMINI a physics question or simulate an event:")
+    user_question = st.text_input("Ask KCTAN-GEMINI a physics question or analyze an active coordinate:")
     if user_question:
+        # Check if the user is asking about an injected URL
+        if image_url_input:
+            user_question += f" (Note: An external environment image link is mounted at {image_url_input})"
+            
         with st.spinner("Analyzing cosmic data..."):
             try:
                 model = genai.GenerativeModel(model_name="gemini-2.5-flash", system_instruction=system_prompt)
